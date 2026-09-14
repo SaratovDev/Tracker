@@ -1,0 +1,41 @@
+/* ============================================================
+   TaskTracker — дизайн-токены «Post-Digital Archive»
+   Сетка: 3 колонки, container max-width 1440px, padding 32px, gap 24px
+   Карточки: белые, чёрная рамка 1px, радиус 0
+   ============================================================ */
+:root {
+  /* цвет */
+  --color-bg: #f5f2ec;
+  --color-surface: #ffffff;
+  --color-ink: #141414;
+  --color-ink-secondary: #66635c;
+  --color-border: #141414;
+  --color-overlay: rgba(20, 20, 20, 0.5);
+  --color-success: #4caf50; /* приоритет «низкий» / статус done */
+  --color-warning: #ffc107; /* приоритет «средний» / статус paused */
+  --color-danger: #f44336;  /* приоритет «высокий» / ошибки */
+
+  /* типографика */
+  --font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fs-display-large: 56px;
+  --lh-display-large: 1.05;
+  --fs-heading: 32px;
+  --lh-heading: 1.2;
+  --fs-meta-label: 12px;
+  --lh-meta-label: 1.4;
+  --ls-meta-label: 0.08em;
+  --fs-body: 16px;
+  --lh-body: 1.5;
+  --fs-small-text: 12px;
+  --lh-small-text: 1.4;
+
+  /* сетка */
+  --container-max: 1440px;
+  --container-padding: 32px;
+  --gap: 24px;
+  --grid-columns: 3;
+
+  /* форма */
+  --radius: 0;
+  --border-width: 1px;
+}
