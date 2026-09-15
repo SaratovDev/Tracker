@@ -9,12 +9,15 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "hash-password": "node scripts/hash-password.mjs"
+    "hash-password": "node scripts/hash-password.mjs",
+    "generate-secret": "node scripts/generate-secret.mjs",
+    "import-backup": "node scripts/import-backup.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.0",
     "pinia": "^2.3.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",

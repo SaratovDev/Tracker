@@ -1,8 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import handler from './login.js'
 import { hashPassword, resetRateLimit } from '../server/auth.js'
+import { SESSION_COOKIE, verifySessionToken } from '../server/session.js'
 
 const PASSWORD = '0321'
+const SESSION_SECRET = 'api-login-test-secret'
 
 function mockReq({ method = 'POST', body, ip = '203.0.113.1' } = {}) {
   return { method, body, headers: { 'x-forwarded-for': ip }, socket: {} }
@@ -29,6 +31,7 @@ function mockRes() {
 
 beforeAll(() => {
   process.env.ADMIN_PASSWORD_HASH = hashPassword(PASSWORD, 'api-fixed-salt')
+  process.env.SESSION_SECRET = SESSION_SECRET
 })
 
 describe('POST /api/login', () => {
@@ -46,6 +49,39 @@ describe('POST /api/login', () => {
 
     expect(res.statusCode).toBe(200)
     expect(res.payload).toEqual({ ok: true })
+  })
+
+  it('выдаёт HttpOnly-cookie сессии при верном пароле', () => {
+    const res = mockRes()
+    handler(mockReq({ body: { password: PASSWORD }, ip: 'cookie' }), res)
+
+    const cookie = res.headers['set-cookie']
+    expect(cookie).toContain(`${SESSION_COOKIE}=`)
+    expect(cookie).toContain('HttpOnly')
+    expect(cookie).toContain('Secure')
+
+    const token = cookie.slice(cookie.indexOf('=') + 1, cookie.indexOf(';'))
+    expect(verifySessionToken(token, SESSION_SECRET)).toBe(true)
+  })
+
+  it('не выдаёт cookie при неверном пароле', () => {
+    const res = mockRes()
+    handler(mockReq({ body: { password: 'wrong' }, ip: 'no-cookie' }), res)
+
+    expect(res.statusCode).toBe(401)
+    expect(res.headers['set-cookie']).toBeUndefined()
+  })
+
+  it('отвечает 500, если не задан SESSION_SECRET', () => {
+    const saved = process.env.SESSION_SECRET
+    delete process.env.SESSION_SECRET
+
+    const res = mockRes()
+    handler(mockReq({ body: { password: PASSWORD }, ip: 'no-secret' }), res)
+
+    expect(res.statusCode).toBe(500)
+    expect(res.payload.error).toBe('server_not_configured')
+    process.env.SESSION_SECRET = saved
   })
 
   it('отклоняет неверный пароль', () => {

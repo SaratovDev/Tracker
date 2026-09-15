@@ -9,10 +9,22 @@ export default defineConfig(({ mode }) => {
   return {
     // base из VITE_BASE_PATH — нужен только при деплое в подпапку (по умолчанию '/')
     base: process.env.VITE_BASE_PATH || env.VITE_BASE_PATH || '/',
-    plugins: [vue(), devApiPlugin({ passwordHash: env.ADMIN_PASSWORD_HASH })],
+    plugins: [
+      vue(),
+      devApiPlugin({
+        passwordHash: env.ADMIN_PASSWORD_HASH,
+        sessionSecret: env.SESSION_SECRET,
+        blobToken: env.BLOB_READ_WRITE_TOKEN
+      })
+    ],
     test: {
       environment: 'node',
-      include: ['src/**/*.test.js', 'server/**/*.test.js', 'api/**/*.test.js']
+      include: [
+        'src/**/*.test.js',
+        'server/**/*.test.js',
+        'api/**/*.test.js',
+        'netlify/**/*.test.js'
+      ]
     }
   }
 })
